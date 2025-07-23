@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pharmacie SantéPlus - Votre pharmacie en ligne</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background: #f5f9ff;
+            color: #333;
+        }
+        header {
+            background: #0077cc;
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        main {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 0.4rem;
+        }
+        p.lead {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        .btn-primary {
+            background: #0077cc;
+            color: white;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #005fa3;
+        }
+        section.features {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 3rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex: 1 1 250px;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+        }
+        .feature h3 {
+            margin-bottom: 1rem;
+            color: #0077cc;
+        }
+        footer {
+            margin-top: 5rem;
+            padding: 2rem 1rem;
+            background: #002d5a;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            header {
+                font-size: 1.4rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            section.features {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Pharmacie SantéPlus
+</header>
+
+<main>
+    <h1>Votre pharmacie de confiance en ligne</h1>
+    <p class="lead">
+        Commandez vos médicaments et produits de santé depuis chez vous, en toute sécurité et simplicité.
+    </p>
+    <a href="catalogue.html"  class="btn-primary">Voir les produits</a>
+
+    <section class="features">
+        <div class="feature">
+            <h3>Large choix de produits</h3>
+            <p>Plus de 5000 références de médicaments, compléments, cosmétiques et matériels médicaux.</p>
+        </div>
+        <div class="feature">
+            <h3>Livraison rapide</h3>
+            <p>Recevez vos commandes en 24h à domicile ou en point relais proche de chez vous.</p>
+        </div>
+        <div class="feature">
+            <h3>Conseils personnalisés</h3>
+            <p>Pharmaciens diplômés disponibles par chat et téléphone pour répondre à vos questions.</p>
+        </div>
+    </section>
+
+    <section id="contact" style="margin-top:4rem; text-align:left; max-width: 400px; margin-left:auto; margin-right:auto;">
+        <h2>Contactez-nous</h2>
+        <form action="mailto:contact@santeplus.com" method="post" enctype="text/plain" style="display:flex; flex-direction:column; gap:1rem;">
+            <label for="name">Nom complet :</label>
+            <input type="text" id="name" name="name" required style="padding:0.5rem; border-radius:4px; border:1px solid #ccc;" />
+            
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required style="padding:0.5rem; border-radius:4px; border:1px solid #ccc;" />
+            
+            <label for="message">Message :</label>
+            <textarea id="message" name="message" rows="4" required style="padding:0.5rem; border-radius:4px; border:1px solid #ccc;"></textarea>
+            
+            <button type="submit" class="btn-primary">Envoyer</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    &copy; 2025 Pharmacie SantéPlus - Tous droits réservés | Licence et conformité garanties
+</footer>
+
+
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6880ec4cb325321919f700c1/1j0rpm44e';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+</body>
+</html>

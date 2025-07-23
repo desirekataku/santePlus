@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catalogue - Pharmacie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2a8c82;
+    }
+    .filters, .search-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .product {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .product h3 {
+      font-size: 18px;
+      margin: 10px 0 5px;
+    }
+    .product p {
+      color: #666;
+      font-size: 14px;
+    }
+    .product button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      background-color: #2a8c82;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .product button:hover {
+      background-color: #1e645e;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Catalogue Médical</h1>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Rechercher un médicament..." onkeyup="filterProducts()" />
+  </div>
+
+  <div class="filters">
+    <select id="typeFilter" onchange="filterProducts()">
+      <option value="all">Tous les types</option>
+      <option value="antalgique">Antalgique</option>
+      <option value="sirop">Sirop</option>
+      <option value="vitamine">Vitamine</option>
+    </select>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <!-- Exemple de produit -->
+    <div class="product" data-type="antalgique" data-name="Doliprane">
+      <img src="https://via.placeholder.com/200x120" alt="Doliprane" />
+      <h3>Doliprane 500mg</h3>
+      <p>Antalgique contre les douleurs et la fièvre.</p>
+      <button>Ajouter au panier</button>
+    </div>
+
+    <div class="product" data-type="sirop" data-name="Toplexil">
+      <img src="https://via.placeholder.com/200x120" alt="Toplexil" />
+      <h3>Toplexil</h3>
+      <p>Sirop contre la toux sèche.</p>
+      <button>Ajouter au panier</button>
+    </div>
+
+    <div class="product" data-type="vitamine" data-name="Vitamine C">
+      <img src="https://via.placeholder.com/200x120" alt="Vitamine C" />
+      <h3>Vitamine C 1000mg</h3>
+      <p>Renforce les défenses immunitaires.</p>
+      <button>Ajouter au panier</button>
+    </div>
+  </div>
+
+  <script>
+    function filterProducts() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const type = document.getElementById("typeFilter").value;
+      const products = document.querySelectorAll(".product");
+
+      products.forEach(product => {
+        const name = product.getAttribute("data-name").toLowerCase();
+        const productType = product.getAttribute("data-type");
+
+        const matchesSearch = name.includes(input);
+        const matchesType = type === "all" || productType === type;
+
+        product.style.display = matchesSearch && matchesType ? "block" : "none";
+      });
+    }
+  </script>
+
+</body>
+</html>
