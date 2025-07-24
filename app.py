@@ -1,11 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from flask import redirect, url_for, flash
-from models import Produit
-from extensions import db
-
 
 app = Flask(__name__)
 
@@ -18,15 +14,9 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-db = SQLAlchemy(app)
+app.secret_key = 'une_clef_secrete_pour_flash'
 
-# Route index
-@app.route('/')
-def index():
-    # Tu peux rediriger vers le catalogue, ou rendre une page index.html
-    # return redirect(url_for('catalogue'))
-    # Ou si tu as un template index.html :
-    return render_template('index.html')
+db = SQLAlchemy(app)
 
 # Modèle Produit
 class Produit(db.Model):
@@ -36,25 +26,15 @@ class Produit(db.Model):
     type = db.Column(db.String(50), nullable=False)
     image_url = db.Column(db.String(200), nullable=True)
 
-# Route admin : ajout + suppression produits
+# Route index
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Route admin : affichage + ajout produit
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if request.method == 'POST':
-        # Suppression produit
-        if 'delete_id' in request.form:
-            prod_id = int(request.form['delete_id'])
-            produit = Produit.query.get(prod_id)
-            if produit:
-                # Supprimer fichier image si existant
-                if produit.image_url:
-                    try:
-                        os.remove(produit.image_url.lstrip('/'))
-                    except Exception:
-                        pass
-                db.session.delete(produit)
-                db.session.commit()
-            return redirect(url_for('admin'))
-
         # Ajout produit
         nom = request.form['nom']
         description = request.form['description']
@@ -72,28 +52,36 @@ def admin():
         nouveau_produit = Produit(nom=nom, description=description, type=type_produit, image_url=image_url)
         db.session.add(nouveau_produit)
         db.session.commit()
+        flash('Produit ajouté avec succès.', 'success')
         return redirect(url_for('admin'))
 
     produits = Produit.query.all()
     return render_template('admin.html', produits=produits)
 
-# Route catalogue pour affichage dynamique
+# Route catalogue
 @app.route('/catalogue')
 def catalogue():
     produits = Produit.query.all()
     return render_template('catalogue.html', produits=produits)
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
-
-
-# Route supprimer_produit
+# Route suppression produit
 @app.route('/supprimer/<int:produit_id>', methods=['POST'])
 def supprimer_produit(produit_id):
     produit = Produit.query.get_or_404(produit_id)
+    # Suppression fichier image si existe
+    if produit.image_url:
+        chemin_image = produit.image_url.lstrip('/')
+        if os.path.exists(chemin_image):
+            try:
+                os.remove(chemin_image)
+            except Exception as e:
+                print(f"Erreur suppression image: {e}")
     db.session.delete(produit)
     db.session.commit()
     flash('Produit supprimé avec succès.', 'success')
     return redirect(url_for('admin'))
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
