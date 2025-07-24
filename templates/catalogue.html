@@ -3,18 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catalogue - Pharmacie</title>
+  <title>Catalogue - SantéPlus</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f7f7f7;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
+
+    nav {
+      background-color: #2a8c82;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
     h1 {
       text-align: center;
       color: #2a8c82;
+      margin-top: 20px;
     }
+
     .filters, .search-bar {
       display: flex;
       justify-content: center;
@@ -22,11 +54,27 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
+
+    .search-bar input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
+      padding: 0 20px 20px;
     }
+
     .product {
       background: white;
       border-radius: 10px;
@@ -34,20 +82,24 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       text-align: center;
     }
+
     .product img {
       width: 100%;
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
     }
+
     .product h3 {
       font-size: 18px;
       margin: 10px 0 5px;
     }
+
     .product p {
       color: #666;
       font-size: 14px;
     }
+
     .product button {
       margin-top: 10px;
       padding: 8px 16px;
@@ -57,12 +109,22 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .product button:hover {
       background-color: #1e645e;
     }
   </style>
 </head>
 <body>
+
+  <nav>
+    <div class="logo">SantéPlus</div>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Accueil</a>
+      <a href="{{ url_for('catalogue') }}">Catalogue</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+    </div>
+  </nav>
 
   <h1>Catalogue Médical</h1>
 
@@ -80,27 +142,14 @@
   </div>
 
   <div class="product-grid" id="productGrid">
-    <!-- Exemple de produit -->
-    <div class="product" data-type="antalgique" data-name="Doliprane">
-      <img src="https://via.placeholder.com/200x120" alt="Doliprane" />
-      <h3>Doliprane 500mg</h3>
-      <p>Antalgique contre les douleurs et la fièvre.</p>
-      <button>Ajouter au panier</button>
-    </div>
-
-    <div class="product" data-type="sirop" data-name="Toplexil">
-      <img src="https://via.placeholder.com/200x120" alt="Toplexil" />
-      <h3>Toplexil</h3>
-      <p>Sirop contre la toux sèche.</p>
-      <button>Ajouter au panier</button>
-    </div>
-
-    <div class="product" data-type="vitamine" data-name="Vitamine C">
-      <img src="https://via.placeholder.com/200x120" alt="Vitamine C" />
-      <h3>Vitamine C 1000mg</h3>
-      <p>Renforce les défenses immunitaires.</p>
-      <button>Ajouter au panier</button>
-    </div>
+    {% for produit in produits %}
+      <div class="product" data-type="{{ produit.type }}" data-name="{{ produit.nom }}">
+        <img src="{{ produit.image_url }}" alt="{{ produit.nom }}">
+        <h3>{{ produit.nom }}</h3>
+        <p>{{ produit.description }}</p>
+        <button>Ajouter au panier</button>
+      </div>
+    {% endfor %}
   </div>
 
   <script>

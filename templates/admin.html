@@ -1,115 +1,175 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Gérer les produits</title>
+  <meta charset="UTF-8" />
+  <title>Administration - SantéPlus</title>
   <style>
     body {
-      font-family: Arial;
-      background: #f4f4f4;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
     }
+
+    nav {
+      background-color: #2a8c82;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
     h1 {
+      text-align: center;
+      margin: 20px;
       color: #2a8c82;
     }
+
     form {
-      background: white;
+      background-color: white;
+      width: 90%;
+      max-width: 500px;
+      margin: 20px auto;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input, select, textarea {
+
+    form input,
+    form button {
       width: 100%;
       padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    button {
-      background: #2a8c82;
+
+    form button {
+      background-color: #2a8c82;
       color: white;
-      padding: 10px 20px;
       border: none;
+      font-weight: bold;
       cursor: pointer;
     }
+
+    form button:hover {
+      background-color: #237369;
+    }
+
     .product-list {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
+      width: 90%;
+      max-width: 900px;
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
     }
+
     .product-item {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      text-align: center;
     }
-    .product-item:last-child {
-      border-bottom: none;
+
+    .product-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 10px;
     }
-    .product-item span {
-      display: inline-block;
-      margin-right: 10px;
+
+    .product-item h3 {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .product-item p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .delete-form {
+      margin-top: 10px;
+    }
+
+    .delete-form button {
+      background-color: #cc4444;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-form button:hover {
+      background-color: #a83232;
     }
   </style>
 </head>
-<p><a href="/logout">🔒 Déconnexion</a></p>
 <body>
 
-  <h1>Interface Admin - Ajouter un produit</h1>
+  <nav>
+    <div class="logo">SantéPlus</div>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Accueil</a>
+      <a href="{{ url_for('catalogue') }}">Catalogue</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+    </div>
+  </nav>
 
-  <form id="productForm">
-    <input type="text" id="name" placeholder="Nom du produit" required />
-    <input type="text" id="type" placeholder="Type (antalgique, sirop, etc.)" required />
-    <textarea id="description" placeholder="Description" required></textarea>
-    <input type="url" id="image" placeholder="Lien image (URL)" required />
-    <button type="submit">Ajouter</button>
+  <h1>Panneau d'administration</h1>
+
+  <!-- Formulaire d'ajout de produit -->
+  <form method="POST" action="{{ url_for('admin') }}" enctype="multipart/form-data">
+    <input type="text" name="nom" placeholder="Nom du produit" required>
+    <input type="text" name="description" placeholder="Description" required>
+    <input type="text" name="type" placeholder="Type (sirop, antalgique...)" required>
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">Ajouter le produit</button>
   </form>
 
-  <div class="product-list" id="productList">
-    <h2>Produits enregistrés</h2>
-    <!-- produits ajoutés ici -->
+  <!-- Liste des produits existants -->
+  <div class="product-list">
+    {% for produit in produits %}
+      <div class="product-item">
+        <img src="{{ produit.image_url }}" alt="{{ produit.nom }}">
+        <h3>{{ produit.nom }}</h3>
+        <p>{{ produit.description }}</p>
+
+        <!-- Formulaire de suppression -->
+        <form class="delete-form" method="POST" action="{{ url_for('supprimer_produit', produit_id=produit.id) }}">
+          <button type="submit" onclick="return confirm('Supprimer ce produit ?')">Supprimer</button>
+        </form>
+      </div>
+    {% endfor %}
   </div>
-
-  <script>
-    const form = document.getElementById("productForm");
-    const list = document.getElementById("productList");
-
-    // Charger les produits du localStorage
-    let produits = JSON.parse(localStorage.getItem("produits")) || [];
-
-    function afficherProduits() {
-      list.innerHTML = "<h2>Produits enregistrés</h2>";
-      produits.forEach((p, i) => {
-        const div = document.createElement("div");
-        div.className = "product-item";
-        div.innerHTML = `
-          <strong>${p.name}</strong> - <span>${p.type}</span>
-          <button onclick="supprimer(${i})">❌ Supprimer</button>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    function supprimer(index) {
-      produits.splice(index, 1);
-      localStorage.setItem("produits", JSON.stringify(produits));
-      afficherProduits();
-    }
-
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const produit = {
-        name: name.value,
-        type: type.value,
-        description: description.value,
-        image: image.value
-      };
-      produits.push(produit);
-      localStorage.setItem("produits", JSON.stringify(produits));
-      form.reset();
-      afficherProduits();
-    });
-
-    afficherProduits();
-  </script>
 
 </body>
 </html>
+
+
+
+
