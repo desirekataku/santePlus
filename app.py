@@ -1,30 +1,77 @@
-from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask_cors import CORS
+from extensions import db
+import os
 
 app = Flask(__name__)
+CORS(app)
 
-# Exemple catalogue (remplacez par une DB)
-PRODUCTS = [
-    {"id":1, "name":"Paracétamol 1 g", "price":2.99, "img":"paracetamol.jpg"},
-    {"id":2, "name":"Vitamine C 1000", "price":9.50, "img":"vitaminec.jpg"},
-    {"id":3, "name":"Crème solaire SPF50", "price":12.90, "img":"creme.jpg"},
-]
+# Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///produits.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'secret123'  # Change ce mot de passe secret pour plus de sécurité
+
+db.init_app(app)
+
+from models import Produit
+
+with app.app_context():
+    db.create_all()
+
+# ------------------- ROUTES -----------------------
 
 @app.route("/")
-def home():
-    return render_template("index.html", products=PRODUCTS)
+def catalogue():
+    return render_template("catalogue.html")
 
-@app.route("/product/<int:pid>")
-def product(pid):
-    p = next((p for p in PRODUCTS if p["id"]==pid), None)
-    if not p: return "Produit introuvable", 404
-    return render_template("product.html", product=p)
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        password = request.form.get("password")
+        if password == "admin123":  # 💬 Change le mot de passe ici
+            session["admin"] = True
+            return redirect(url_for("admin"))
+        else:
+            return render_template("login.html", error="Mot de passe incorrect")
+    return render_template("login.html")
 
-@app.route("/add_to_cart", methods=["POST"])
-def add_to_cart():
-    product_id = int(request.form["product_id"])
-    # Ici vous ajoutez à la session ou DB
-    return redirect(url_for("home"))
+@app.route("/logout")
+def logout():
+    session.pop("admin", None)
+    return redirect(url_for("login"))
+
+@app.route("/admin")
+def admin():
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+    return render_template("admin.html")
+
+# ------------------- API PRODUITS -----------------------
+
+@app.route("/api/produits", methods=["GET", "POST"])
+def produits():
+    if request.method == "GET":
+        produits = Produit.query.all()
+        return jsonify([p.to_dict() for p in produits])
+    else:
+        if not session.get("admin"):
+            return jsonify({"error": "Non autorisé"}), 403
+        data = request.json
+        produit = Produit(**data)
+        db.session.add(produit)
+        db.session.commit()
+        return jsonify(produit.to_dict()), 201
+
+@app.route("/api/produits/<int:id>", methods=["DELETE"])
+def delete_produit(id):
+    if not session.get("admin"):
+        return jsonify({"error": "Non autorisé"}), 403
+    produit = Produit.query.get(id)
+    if produit:
+        db.session.delete(produit)
+        db.session.commit()
+        return jsonify({"message": "Supprimé"}), 200
+    return jsonify({"error": "Introuvable"}), 404
 
 if __name__ == "__main__":
     app.run(debug=True)

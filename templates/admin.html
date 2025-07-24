@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Gérer les produits</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1 {
+      color: #2a8c82;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    button {
+      background: #2a8c82;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+    }
+    .product-list {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .product-item {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .product-item:last-child {
+      border-bottom: none;
+    }
+    .product-item span {
+      display: inline-block;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<p><a href="/logout">🔒 Déconnexion</a></p>
+<body>
+
+  <h1>Interface Admin - Ajouter un produit</h1>
+
+  <form id="productForm">
+    <input type="text" id="name" placeholder="Nom du produit" required />
+    <input type="text" id="type" placeholder="Type (antalgique, sirop, etc.)" required />
+    <textarea id="description" placeholder="Description" required></textarea>
+    <input type="url" id="image" placeholder="Lien image (URL)" required />
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div class="product-list" id="productList">
+    <h2>Produits enregistrés</h2>
+    <!-- produits ajoutés ici -->
+  </div>
+
+  <script>
+    const form = document.getElementById("productForm");
+    const list = document.getElementById("productList");
+
+    // Charger les produits du localStorage
+    let produits = JSON.parse(localStorage.getItem("produits")) || [];
+
+    function afficherProduits() {
+      list.innerHTML = "<h2>Produits enregistrés</h2>";
+      produits.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "product-item";
+        div.innerHTML = `
+          <strong>${p.name}</strong> - <span>${p.type}</span>
+          <button onclick="supprimer(${i})">❌ Supprimer</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function supprimer(index) {
+      produits.splice(index, 1);
+      localStorage.setItem("produits", JSON.stringify(produits));
+      afficherProduits();
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const produit = {
+        name: name.value,
+        type: type.value,
+        description: description.value,
+        image: image.value
+      };
+      produits.push(produit);
+      localStorage.setItem("produits", JSON.stringify(produits));
+      form.reset();
+      afficherProduits();
+    });
+
+    afficherProduits();
+  </script>
+
+</body>
+</html>

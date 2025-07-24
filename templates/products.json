@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nom": "Paracétamol",
+    "type": "antalgique",
+    "prix": 3.50
+  },
+  {
+    "id": 2,
+    "nom": "Sirop Toux",
+    "type": "sirop",
+    "prix": 5.20
+  }
+]
